@@ -1,0 +1,15 @@
+push_constant 0
+pop_local 0
+label LOOP_START
+push_argument 0
+push_local 0
+add null
+pop_local 0	
+push_argument 0
+push_constant 1
+sub null
+pop_argument 0
+push_argument 0
+if-goto LOOP_START
+push_local 0
+end end

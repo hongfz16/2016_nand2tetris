@@ -1,0 +1,24 @@
+class Main{
+	function int power (int x, int y){
+		var int r;
+		var int i;
+		let r=1;
+		let i=1;
+		while (~(i>y)){
+		let r=r*x;
+		let i=i+1;
+		}
+		return r;
+	}
+	function void main(){
+		var int a;
+		var int b;
+		var int c;
+		let a=Keyboard.readInt("Enter a number: ");
+		let b=Keyboard.readInt("Enter a JHVKKVJH number: ");
+		let c=Main.power(a,b);
+		do Output.printInt(c);
+		do Output.println();
+		return;
+	}
+}

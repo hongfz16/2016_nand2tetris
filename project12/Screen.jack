@@ -1,0 +1,181 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/Screen.jack
+
+/**
+ * A library of functions for displaying graphics on the screen.
+ * The Hack physical screen consists of 512 rows (indexed 0..511, top to bottom)
+ * of 256 pixels each (indexed 0..255, left to right). The top left pixel on 
+ * the screen is indexed (0,0).
+ */
+class Screen {
+	
+	static int color;
+    /** Initializes the Screen. */
+    function void init() {
+    	do Output.init();
+    	let color=1;
+    	do Screen.clearScreen();
+    	return ;
+    }
+
+    /** Erases the entire screen. */
+    function void clearScreen() {
+    	do Output.cls();
+    	return ;
+	}
+
+    /** Sets the current color, to be used for all subsequent drawXXX commands.
+     *  Black is represented by true, white by false. */
+    function void setColor(boolean b) {
+    	if(b)
+    	{
+			let color=1;
+   	 	}
+   	 	else
+   	 	{
+   	 		let color=0;
+   	 	}
+		return ;
+	}
+
+    /** Draws the (x,y) pixel, using the current color. */
+    function void drawPixel(int x, int y) {
+    	if((y<0|y>255)|(x<0|x>511))
+    	{
+    		return ;
+    	}
+    	if(color=1)
+    	{
+    		do Output.setpixel(y,x);
+    	}
+    	else
+    	{
+    		do Output.erasepixel(y,x);
+    	}
+    	return ;
+    }
+
+    /** Draws a line from pixel (x1,y1) to pixel (x2,y2), using the current color. */
+    function void drawLine(int x1, int y1, int x2, int y2) {
+    	var int tx1,ty1,tx2,ty2,d;
+    	if(x1=x2)
+    	{
+    		let ty1=Math.min(y1,y2);
+    		let ty2=Math.max(y1,y2);
+    		while(~(ty1>ty2))
+    		{
+    			do Screen.drawPixel(x1,ty1);
+    			let ty1=ty1+1;
+    		}
+    		return ;
+    	}
+    	if(y1=y2)
+    	{
+    		let tx1=Math.min(x1,x2);
+    		let tx2=Math.max(x1,x2);
+    		while(~(tx1>tx2))
+    		{
+    			do Screen.drawPixel(tx1,y1);
+    			let tx1=tx1+1;
+    		}
+    		return ;
+    	}
+
+    	
+    	if(Math.abs(y1-y2)>Math.abs(x1-x2))
+    	{    	
+			if(x2>x1)
+    		{
+    			let tx1=x1;
+    			let ty1=y1;
+    			let tx2=x2;
+    			let ty2=y2;
+    		}
+    		else
+    		{
+    			let tx1=x2;
+    			let ty1=y2;
+    			let tx2=x1;
+    			let ty2=y1;
+    		}
+    		let d=tx2-tx1;
+    		while(~(d<0))
+    		{
+    			do Screen.drawPixel(tx1+d,(((ty2-ty1)*d)/(tx2-tx1))+ty1);
+    			let d=d-1;
+    		}
+		}
+    	else
+    	{
+    		if(y2>y1)
+    		{
+    			let ty1=y1;
+    			let tx1=x1;
+    			let ty2=y2;
+    			let tx2=x2;
+    		}
+    		else
+    		{
+    			let ty1=y2;
+    			let tx1=x2;
+    			let ty2=y1;
+    			let tx2=x1;
+    		}
+    		let d=ty2-ty1;
+    		while(~(d<0))
+    		{
+    			do Screen.drawPixel((((tx2-tx1)*d)/(ty2-ty1))+tx1,ty1+d);
+    			let d=d-1;
+    		}
+    	}
+ 	
+		return ;
+    }
+/*
+do Screen.drawPixel(x+xi,(((y2-y1)/d)*x)+y1);
+*/
+    /** Draws a filled rectangle whose top left corner is (x1, y1)
+     * and bottom right corner is (x2,y2), using the current color. */
+    function void drawRectangle(int x1, int y1, int x2, int y2) {
+    	var int i,j;
+    	let i=x1;
+    	while(~(i>x2))
+    	{
+    		let j=y1;
+    		while(~(j>y2))
+    		{
+    			do Screen.drawPixel(i,j);
+    			let j=j+1;
+			}
+    		let i=i+1;
+    	}
+    	return ;
+    }
+
+    /** Draws a filled circle of radius r<=181 around (x,y), using the current color. */
+    function void drawCircle(int x, int y, int r) {
+ 		var int d,h;
+ 		let d=0;
+		while(~(d>r))
+ 		{
+	 		let h=Math.sqrt((r*r)-(d*d));
+	 		do Screen.drawLine(x-d,y-h,x-d,y+h);
+	 		do Screen.drawLine(x+d,y-h,x+d,y+h);
+			let d=d+1;
+		}
+		/*
+		let d=0;
+		while(~(d>r))
+		{
+			let h=Math.sqrt((r*r)-(d*d));
+	 		//do Screen.drawLine(x-d,y-h,x-d,y+h);
+	 		do screen.drawLine(x+d,y-h,x+d,y+h);
+			let d=d+1;	
+		}
+		*/
+		//do Screen.drawLine(x,y-r,x,y+r);
+		return ;
+    }
+}

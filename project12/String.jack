@@ -1,0 +1,140 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/String.jack
+
+/**
+ * Represents character strings. In addition for constructing and disposing
+ * strings, the class features methods for getting and setting individual
+ * characters of the string, for erasing the string's last character,
+ * for appending a character to the string's end, and more typical
+ * string-oriented operations.
+ */
+class String {
+	
+	field Array S;
+	field int MaxL,len;
+    /** constructs a new empty string with a maximum length of maxLength
+     *  and initial length of 0. */
+    constructor String new(int maxLength) {
+    	let S=Array.new(maxLength+1);
+    	let MaxL=maxLength;
+    	let len=0;
+    	return this;
+	}
+
+    /** Disposes this string. */
+    method void dispose() {
+    	do Array.dispose(S);
+    	do Memory.deAlloc(this);
+    	return ;
+	}
+
+    /** Returns the current length of this string. */
+    method int length() {
+    	return len;
+    }
+
+    /** Returns the character at the j-th location of this string. */
+    method char charAt(int j) {
+    	return S[j];
+	}
+
+    /** Sets the character at the j-th location of this string to c. */
+    method void setCharAt(int j, char c) {
+    	let S[j]=c;
+    	return ;
+	}
+
+    /** Appends c to this string's end and returns this string. */
+    method String appendChar(char c) {
+    	let S[len]=c;
+    	let len=len+1;
+    	return this;
+    }
+
+    /** Erases the last character from this string. */
+    method void eraseLastChar() {
+    	if(~(len>0))
+		{
+			return ;
+		}
+		let len=len-1;
+		return ;
+    }
+
+    /** Returns the integer value of this string, 
+     *  until a non-digit character is detected. */
+    method int intValue() {
+    	var int rtn;
+    	var int sgn;
+    	var int i;
+		let sgn=0;
+    	let i=0;
+    	while(((S[i]<48)|(S[i]>57))&(i<len))
+    	{
+    		if(S[i]=45)
+			{
+				let sgn=1;
+			}
+			let i=i+1;
+		}
+		while(((S[i]>47)&(S[i]<58))&(i<len))
+		{
+			let rtn=rtn*10+S[i]-48;
+			let i=i+1;
+		}
+		if(sgn)
+		{
+			let rtn=-rtn;
+		}
+		return rtn;
+	}
+	//stO dalao Orz
+    /** Sets this string to hold a representation of the given value. */
+    method void setInt(int val) {
+    	var int l,r,t;
+		let len=0;
+    	if(val<0)
+    	{
+    		let S[0]=45;
+    		let val=-val;
+    		let len=1;
+    	}
+    	while(val>0)
+    	{
+    		let S[len]=(val-((val/10)*10))+48 ;
+    		let len=len+1;
+    		let val=val/10;
+		}
+		if(S[0]=45)
+		{
+			let l=1;
+		}
+		let r=len-1;
+		while(l<r)
+		{
+			let t=S[l];
+			let S[l]=S[r];
+			let S[r]=t;
+			let l=l+1;
+			let r=r-1;
+		} 
+    	return ;
+	}
+
+    /** Returns the new line character. */
+    function char newLine() {
+    	return 128;
+    }
+
+    /** Returns the backspace character. */
+    function char backSpace() {
+    	return 129;
+	}
+
+    /** Returns the double quote (") character. */
+    function char doubleQuote() {
+    	return 34;
+	}
+}
